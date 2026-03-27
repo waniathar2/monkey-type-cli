@@ -1,9 +1,24 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useConfigStore } from "../../src/stores/configStore.js";
+import { type Config } from "../../src/types.js";
+
+const defaultConfig: Config = {
+  mode: "time",
+  duration: 30,
+  wordCount: 25,
+  wordList: "english-1k",
+  quoteLength: "medium",
+  caretStyle: "line",
+  theme: "default",
+  showLiveWpm: true,
+  showLiveAccuracy: true,
+  smoothCaret: true,
+};
 
 describe("configStore", () => {
   beforeEach(() => {
-    useConfigStore.setState(useConfigStore.getInitialState());
+    // Reset to known defaults regardless of disk state
+    useConfigStore.setState({ config: { ...defaultConfig } });
   });
 
   it("has sensible defaults", () => {

@@ -2,6 +2,9 @@ import React from "react";
 import { render } from "ink";
 import meow from "meow";
 import App from "./App.js";
+import StatsView from "./components/StatsView.js";
+import { useConfigStore } from "./stores/configStore.js";
+import { type TestMode, type TimeDuration, type WordCount, type WordListName, type CaretStyle } from "./types.js";
 
 const cli = meow(
   `
@@ -22,12 +25,12 @@ const cli = meow(
   {
     importMeta: import.meta,
     flags: {
-      mode: { type: "string", default: "time" },
-      duration: { type: "number", default: 30 },
-      words: { type: "number", default: 25 },
-      wordlist: { type: "string", default: "english-1k" },
-      theme: { type: "string", default: "default" },
-      caret: { type: "string", default: "line" },
+      mode: { type: "string" },
+      duration: { type: "number" },
+      words: { type: "number" },
+      wordlist: { type: "string" },
+      theme: { type: "string" },
+      caret: { type: "string" },
       custom: { type: "string" },
       customFile: { type: "string" },
       stats: { type: "boolean", default: false },
@@ -35,4 +38,26 @@ const cli = meow(
   }
 );
 
-render(<App />);
+// Apply CLI overrides
+useConfigStore.getState().applyCliOverrides({
+  mode: cli.flags.mode as TestMode | undefined,
+  duration: cli.flags.duration as TimeDuration | undefined,
+  wordCount: cli.flags.words as WordCount | undefined,
+  wordList: cli.flags.wordlist as WordListName | undefined,
+  theme: cli.flags.theme,
+  caretStyle: cli.flags.caret as CaretStyle | undefined,
+});
+
+// Ensure terminal state is restored on exit
+process.on("SIGINT", () => {
+  process.exit(0);
+});
+process.on("SIGTERM", () => {
+  process.exit(0);
+});
+
+if (cli.flags.stats) {
+  render(<StatsView />);
+} else {
+  render(<App />);
+}

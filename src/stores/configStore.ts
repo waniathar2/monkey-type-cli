@@ -1,5 +1,9 @@
 import { create } from "zustand";
+import path from "node:path";
 import { type Config } from "../types.js";
+import { readJsonFile, writeJsonFile, getDataDir } from "../persistence/storage.js";
+
+const CONFIG_PATH = path.join(getDataDir(), "config.json");
 
 const defaultConfig: Config = {
   mode: "time",
@@ -14,6 +18,11 @@ const defaultConfig: Config = {
   smoothCaret: true,
 };
 
+function loadConfig(): Config {
+  const saved = readJsonFile<Partial<Config>>(CONFIG_PATH, {});
+  return { ...defaultConfig, ...saved };
+}
+
 interface ConfigState {
   config: Config;
   updateConfig: (partial: Partial<Config>) => void;
@@ -21,9 +30,13 @@ interface ConfigState {
 }
 
 export const useConfigStore = create<ConfigState>()((set) => ({
-  config: { ...defaultConfig },
+  config: loadConfig(),
   updateConfig: (partial) =>
-    set((state) => ({ config: { ...state.config, ...partial } })),
+    set((state) => {
+      const newConfig = { ...state.config, ...partial };
+      writeJsonFile(CONFIG_PATH, newConfig);
+      return { config: newConfig };
+    }),
   applyCliOverrides: (overrides) =>
     set((state) => ({
       config: {
