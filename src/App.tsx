@@ -107,28 +107,56 @@ export default function App() {
     );
   }
 
+  const footerText = showPalette
+    ? "esc close"
+    : screen === "results"
+    ? "tab restart  •  esc home"
+    : screen === "settings"
+    ? "esc back"
+    : "tab restart  •  ctrl+s settings  •  ctrl+p commands";
+
+  const lineWidth = Math.max(0, cols - 4);
+  const dashCount = Math.max(0, lineWidth - 19);
+
   return (
-    <Box flexDirection="column" minHeight={15}>
-      {screen === "home" && !showPalette && (
-        <HomeScreen
-          onFinish={handleFinish}
-          onOpenSettings={() => setScreen("settings")}
-          onOpenPalette={() => setShowPalette(true)}
-        />
-      )}
-      {screen === "results" && lastResult && (
-        <ResultsScreen
-          result={lastResult}
-          onRestart={handleRestart}
-          onHome={handleHome}
-        />
-      )}
-      {screen === "settings" && (
-        <SettingsScreen onBack={handleHome} />
-      )}
-      {showPalette && (
-        <CommandPalette onClose={() => setShowPalette(false)} />
-      )}
+    <Box flexDirection="column" minHeight={rows}>
+      <Box paddingX={2} paddingTop={1}>
+        <Text>
+          <Text color={theme.dimmed}>── </Text>
+          <Text color={theme.accent} bold>monkey-type-cli</Text>
+          <Text color={theme.dimmed}> {"─".repeat(dashCount)}</Text>
+        </Text>
+      </Box>
+
+      <Box flexGrow={1} flexDirection="column" justifyContent="center">
+        {screen === "home" && !showPalette && (
+          <HomeScreen
+            onFinish={handleFinish}
+            onOpenSettings={() => setScreen("settings")}
+            onOpenPalette={() => setShowPalette(true)}
+          />
+        )}
+        {screen === "results" && lastResult && (
+          <ResultsScreen
+            result={lastResult}
+            onRestart={handleRestart}
+            onHome={handleHome}
+          />
+        )}
+        {screen === "settings" && (
+          <SettingsScreen onBack={handleHome} />
+        )}
+        {showPalette && (
+          <CommandPalette onClose={() => setShowPalette(false)} />
+        )}
+      </Box>
+
+      <Box flexDirection="column" paddingX={2} paddingBottom={1}>
+        <Text color={theme.dimmed}>{"─".repeat(lineWidth)}</Text>
+        <Box justifyContent="center">
+          <Text color={theme.dimmed}>{footerText}</Text>
+        </Box>
+      </Box>
     </Box>
   );
 }

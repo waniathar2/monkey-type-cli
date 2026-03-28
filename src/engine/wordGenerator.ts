@@ -1,10 +1,7 @@
-import { createRequire } from "node:module";
 import { type WordListName } from "../types.js";
-
-const require = createRequire(import.meta.url);
-const english200: string[] = require("../data/english-200.json");
-const english1k: string[] = require("../data/english-1k.json");
-const english5k: string[] = require("../data/english-5k.json");
+import english200 from "../data/english-200.json";
+import english1k from "../data/english-1k.json";
+import english5k from "../data/english-5k.json";
 
 const wordLists: Record<WordListName, string[]> = {
   "english-200": english200,

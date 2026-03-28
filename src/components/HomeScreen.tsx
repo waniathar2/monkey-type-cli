@@ -7,6 +7,7 @@ import { getRandomQuote } from "../engine/quoteGenerator.js";
 import ModeSelector from "./ModeSelector.js";
 import TypingArea from "./TypingArea.js";
 import LiveStats from "./LiveStats.js";
+import KeyboardDisplay from "./KeyboardDisplay.js";
 
 interface Props {
   onFinish: () => void;
@@ -19,6 +20,7 @@ export default function HomeScreen({ onFinish, onOpenSettings, onOpenPalette }: 
   const testStore = useTestStore();
   const { stdout } = useStdout();
   const terminalWidth = stdout?.columns ?? 80;
+  const terminalRows = stdout?.rows ?? 24;
 
   const initWords = useCallback(() => {
     let words: string[];
@@ -147,10 +149,11 @@ export default function HomeScreen({ onFinish, onOpenSettings, onOpenPalette }: 
   });
 
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" alignItems="center">
       <ModeSelector />
       <TypingArea terminalWidth={terminalWidth} />
       <LiveStats mode={config.mode} targetDuration={config.mode === "time" ? config.duration : null} />
+      {terminalRows >= 22 && <KeyboardDisplay />}
     </Box>
   );
 }

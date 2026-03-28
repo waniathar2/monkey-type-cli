@@ -28,16 +28,20 @@ export default function ModeSelector() {
 
   return (
     <Box flexDirection="column" alignItems="center" paddingY={1}>
-      <Box gap={2}>
-        {modes.map((m) => (
-          <Text
-            key={m}
-            color={m === config.mode ? theme.accent : theme.dimmed}
-            bold={m === config.mode}
-          >
-            {m}
-          </Text>
-        ))}
+      <Box>
+        <Text>
+          {modes.map((m, idx) => (
+            <React.Fragment key={m}>
+              {idx > 0 && <Text color={theme.dimmed}> │ </Text>}
+              <Text
+                color={m === config.mode ? theme.accent : theme.dimmed}
+                bold={m === config.mode}
+              >
+                {m}
+              </Text>
+            </React.Fragment>
+          ))}
+        </Text>
       </Box>
       {subOptions().length > 0 && (
         <Box gap={2}>
